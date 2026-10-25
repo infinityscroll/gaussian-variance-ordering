@@ -1,0 +1,22 @@
+{
+  "title": "Variance reversals and entropy ordering in Gaussian variational inference",
+  "release_date": "2026-10-25",
+  "version": "1.0.0",
+  "original_private_source_document_date": "2026-10-21",
+  "original_private_source_sha256": "f9da329c0ba9ddb824471eb56ffe8fe160c2bc3c2e85528b9156b4f5a7bdca08",
+  "original_source_status": "Private; this is not a public-disclosure timestamp.",
+  "first_public_release": "This repository release on 2026-10-25, not the private source date.",
+  "changes_since_original": [
+    "Explicit finite parameter pair (9,10000) and analytic proof added.",
+    "Classical log-determinant barrier derivation and attribution added.",
+    "Exact finite-example verifier added.",
+    "Scope, methods and priority wording updated."
+  ],
+  "verification": {
+    "finite_algebra": "89 exact rational checks; root replay matches separate reviewer output byte-for-byte.",
+    "analytic_proofs": "Hand reconstruction by separately tasked AI reviewers and root; not formal verification or independent human peer review."
+  },
+  "ai_assistance": "Extensive use in literature search, derivation, writing and checking.",
+  "priority_claim": false,
+  "practical_improvement_claim": false
+}

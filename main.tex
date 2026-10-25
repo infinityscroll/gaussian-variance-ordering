@@ -1,0 +1,730 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Diag}{\operatorname{Diag}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\R}{\mathbb{R}}
+\title{Variance reversals and entropy ordering\\in Gaussian variational inference}
+\author{Jitendra Prajapati}
+\date{25 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Margossian, Pillaud-Vivien and Saul conjectured that increasing the
+$\alpha$-divergence parameter above one increases every marginal variance
+of the optimal factorized Gaussian approximation to a Gaussian target.
+We give a negative answer. For every prescribed $a>1$, an explicit
+positive-definite Gaussian target has a unique global optimum whose
+marginal variances move in opposite directions as $\alpha$ increases
+through $a$. The dimension is at most
+$\lceil 8a/(a-1)\rceil+2$; a separate choice has dimension ten at $a=2$.
+A rational, dimension-minimal three-dimensional example also has two optimal variances
+that decrease by more than five percent between $\alpha=9$ and
+$\alpha=10000$. The target is fixed while the divergence parameter
+varies. The arguments use exact matrix identities and strict convexity
+in precision coordinates, rather than numerical optimization. In contrast to marginal variances,
+we also give an elementary proof, using classical matrix tools, that
+the optimal Gaussian entropy increases strictly with
+$\alpha>1$ for every fixed linear family of precision matrices,
+unless the target itself belongs to that family.
+\end{abstract}
+\noindent\textbf{Scope.} This public research note documents explicit constructions
+and proofs; it makes no claim of publication priority. The results concern
+an extension conjecture, not the paper's proved ordering theorem on $(0,1)$.
+
+\section{Question and main result}
+Fix a non-diagonal positive-definite covariance $\Sigma$ and let
+$p=N(0,\Sigma)$. The variational family consists of all Gaussians
+$q=N(\nu,D)$ with arbitrary mean $\nu$ and positive diagonal covariance $D$.
+We use exactly the convention of \cite{mps}:
+\begin{equation}\label{eq:div}
+ D_\alpha(p\Vert q)
+ =\frac{\int p^\alpha q^{1-\alpha}-1}{\alpha(\alpha-1)},
+ \qquad \alpha>1.
+\end{equation}
+Write $D(\alpha)$ for the covariance of the global optimum.
+Definition 2 of \cite{mps} compares divergence objectives by comparing
+these diagonal variances componentwise. Their Theorem 3 proves the
+$\alpha$-ordering on $(0,1)$. Section 2.1 and the paragraph after
+Remark 12 in Section 5.3 conjecture the analogous ordering for
+$1<\alpha_1<\alpha_2$.
+
+\begin{theorem}\label{thm:all}
+For each prescribed $a>1$, there is an explicit non-diagonal covariance
+$\Sigma\succ0$ in dimension
+\[
+ n=\left\lceil\frac{8a}{a-1}\right\rceil+2
+\]
+such that the global variational optimum is unique, $D(a)=I$, and
+\[
+ D'_{00}(a)<0<D'_{11}(a).
+\]
+Here $\Sigma$ and the dimension are fixed before differentiating the
+parameter $\alpha$. There is also such an example in dimension ten
+at $a=2$.
+\end{theorem}
+
+\begin{corollary}\label{cor:interval}
+No nonempty open interval contained in $(1,\infty)$ has universal
+componentwise monotonicity of optimal diagonal variances over all
+positive-definite Gaussian targets and dimensions.
+\end{corollary}
+\begin{proof}
+Choose $a$ in that interval and the target from Theorem \ref{thm:all}.
+For all sufficiently small $h>0$, both $a$ and $a+h$ lie in the interval,
+but $D_{00}(a+h)<D_{00}(a)$ and $D_{11}(a+h)>D_{11}(a)$.
+\end{proof}
+
+\begin{theorem}\label{thm:three}
+For the fixed rational target
+\begin{equation}\label{eq:sigma3}
+ \Sigma=\frac1{12648}
+ \begin{pmatrix}
+ 5673&4650&4650\\
+ 4650&9854&-1825\\
+ 4650&-1825&9854
+ \end{pmatrix},
+\end{equation}
+one has $D(9)=I$ and
+\[
+ \diag D'(9)=\frac1{14808952}(264375,-3209,-3209)^\top.
+\]
+Moreover,
+\[
+ \lim_{\alpha\to\infty}D_{22}(\alpha)
+ =\lim_{\alpha\to\infty}D_{33}(\alpha)<\frac{19}{20}.
+\]
+In fact, $D_{22}(\alpha)=D_{33}(\alpha)<19/20$ for every
+$\alpha\ge10000$, so the pair $(9,10000)$ already gives a decrease
+exceeding five percent.
+\end{theorem}
+
+Theorem \ref{thm:all} makes no fixed-dimension claim as $a\downarrow1$,
+and does not assert failure for every prescribed pair of distinct
+parameters. The finite comparison in Theorem \ref{thm:three} concerns
+the same fixed target at both parameters. Neither theorem
+asserts decreasing entropy, poor numerical optimization, or a
+calibration failure on real data.
+
+\section{Global optimum and an exact derivative formula}
+The following derivation supplies the global-optimality step needed for
+a counterexample based on stationary equations.
+
+\begin{lemma}\label{lem:global}
+For every $\Sigma\succ0$ and $\alpha>1$, \eqref{eq:div} has a unique
+global optimum in the factorized Gaussian family. Its mean is zero,
+and its diagonal covariance is a smooth function of $\alpha$ locally
+at every point of $(1,\infty)$.
+\end{lemma}
+\begin{proof}
+Put $P=D^{-1}$ and
+\[
+ \Phi_\alpha(P)=\alpha\Sigma^{-1}-(\alpha-1)P,\qquad
+ H_\alpha(D)=\alpha D-(\alpha-1)\Sigma.
+\]
+The Gaussian integral is finite exactly when $\Phi_\alpha(P)\succ0$.
+This is equivalent to $H_\alpha(D)\succ0$ by inversion of
+positive-definite matrix inequalities. On that domain its
+mean-dependent factor is
+\[
+ \exp\!\left\{\frac{\alpha(\alpha-1)}2
+          \nu^\top H_\alpha(D)^{-1}\nu\right\},
+\]
+which is uniquely minimized at $\nu=0$. Gaussian integration then
+reduces the covariance problem to minimizing
+\begin{equation}\label{eq:J}
+ J_\alpha(P)=-(\alpha-1)\log\det P-\log\det\Phi_\alpha(P)
+\end{equation}
+over positive diagonal $P$ with $\Phi_\alpha(P)\succ0$.
+This is an open convex domain. For a nonzero diagonal perturbation
+$E=\Diag(e_i)$ its Hessian is
+\[
+ d^2J_\alpha(P)[E,E]
+ =(\alpha-1)\sum_i\frac{e_i^2}{P_{ii}^2}
+  +(\alpha-1)^2\operatorname{tr}
+       (\Phi_\alpha^{-1}E\Phi_\alpha^{-1}E)>0.
+\]
+The trace term is a squared Frobenius norm, so strict convexity follows.
+
+The domain is nonempty by taking $P$ small, and is bounded
+coordinatewise since
+$P_{ii}<\alpha(\Sigma^{-1})_{ii}/(\alpha-1)$.
+At its boundary a precision entry or $\det\Phi_\alpha$ vanishes.
+The corresponding negative logarithm diverges while the other term
+is bounded below. A unique interior minimum therefore exists.
+The positive-definite Hessian and the implicit-function theorem give
+a smooth local branch, which uniqueness identifies with the global
+optimum. Infeasible Gaussians have infinite divergence and cannot
+improve this minimum.
+\end{proof}
+
+In covariance coordinates the equivalent objective is
+$\alpha\log\det D-\log\det H_\alpha(D)$, up to constants and a positive
+factor. Its stationarity equation, also Proposition 8 of \cite{mps}, is
+\begin{equation}\label{eq:station}
+ \diag H_\alpha(D)^{-1}=\diag D^{-1}.
+\end{equation}
+
+\begin{lemma}\label{lem:K}
+Let $a>1$ and let $K$ be a correlation matrix satisfying $K\succ I/a$.
+The fixed target
+\begin{equation}\label{eq:target}
+ \Sigma=\frac{aI-K^{-1}}{a-1}
+\end{equation}
+is positive definite, and $D(a)=I$. If $v=\diag D'(a)$, then
+\begin{equation}\label{eq:derivative}
+ [a(K\circ K)-I]v
+ =\frac{(K\circ K)\one-\one}{a-1}.
+\end{equation}
+Here $\circ$ is entrywise multiplication.
+\end{lemma}
+\begin{proof}
+Inverse-order monotonicity gives $K^{-1}\prec aI$, so $\Sigma\succ0$.
+At $D=I$, $H_a=K^{-1}\succ0$, and \eqref{eq:station} holds because
+$\diag K=\one$. Lemma \ref{lem:global} proves global optimality.
+Keeping \eqref{eq:target} fixed while varying $\alpha$ gives
+\[
+ H'_a=I-\Sigma+a\Diag(v),\qquad
+ I-\Sigma=\frac{K^{-1}-I}{a-1}.
+\]
+Differentiate \eqref{eq:station}, use
+$(H^{-1})'=-H^{-1}H'H^{-1}$, and take diagonals to get
+\eqref{eq:derivative}. Its coefficient matrix is positive definite:
+\[
+ a(K\circ K)-I=(aK-I)\circ K\succ0
+\]
+by the Schur product theorem.
+\end{proof}
+
+\section{An explicit reversal at every prescribed parameter}
+Fix $a>1$ for the remainder of this section and set
+\[
+ c=\frac{a-1}{a},\qquad M=\lceil8/c\rceil,\qquad \epsilon=\frac1{10}.
+\]
+Index the coordinates by a weak coordinate $0$, a hub $1$, and $M$
+leaves. Define a real symmetric matrix $R$ with diagonal entries one
+and off-diagonal entries
+\begin{equation}\label{eq:R}
+ R_{01}=\frac1{\sqrt{M+1}},\quad
+ R_{0j}=0,\quad R_{1j}=\frac1{\sqrt2},\quad
+ R_{ij}=\frac12\quad(i\ne j),
+\end{equation}
+where $i,j$ in the last three expressions are leaves.
+
+The leaf block is $(I+\one\one^\top)/2$, whose inverse is
+$2(I-\one\one^\top/(M+1))$. Eliminating that block leaves the
+weak/hub Schur complement
+\[
+ \begin{pmatrix}
+ 1&1/\sqrt{M+1}\\
+ 1/\sqrt{M+1}&1/(M+1)
+ \end{pmatrix}\succeq0.
+\]
+Thus $R\succeq0$. Set
+\[
+ R_\epsilon=(1-\epsilon)R+\epsilon I,\qquad
+ K=I/a+cR_\epsilon.
+\]
+Then $\diag K=\one$ and $K-I/a=cR_\epsilon\succ0$.
+Equation \eqref{eq:target} defines a non-diagonal positive-definite
+target, fixed from now on. Lemma \ref{lem:K} gives $D(a)=I$.
+
+To determine the derivative, put
+\[
+ Z=R\circ R-I,\quad d=c(1-\epsilon)^2,\quad
+ B=I+dZ=(1-d)I+d(R\circ R)\succ0.
+\]
+Here $0<d<1$ and $R\circ R\succeq0$. The off-diagonal entries of $K$
+are $c(1-\epsilon)R_{ij}$, so \eqref{eq:derivative} simplifies to
+\begin{equation}\label{eq:Binv}
+ v=\frac1{a^2c}\bigl(\one-B^{-1}\one\bigr).
+\end{equation}
+Indeed, the coefficient matrix is $acB$, the right side is
+$(d/a)Z\one$, and $dB^{-1}Z=I-B^{-1}$.
+
+By leaf symmetry write
+$B^{-1}\one=(h,b,\ell,\ldots,\ell)^\top$ and set
+$L=1+d(M-1)/4$. The weak, hub and leaf equations are
+\[
+ h+\frac d{M+1}b=1,\qquad
+ \frac d{M+1}h+b+\frac{dM}{2}\ell=1,\qquad
+ \frac d2 b+L\ell=1.
+\]
+Eliminating $h,\ell$ yields
+\begin{equation}\label{eq:schur}
+ b=\frac{1-d/(M+1)-dM/(2L)}
+          {1-d^2/(M+1)^2-d^2M/(4L)}.
+\end{equation}
+The denominator is the hub Schur complement of $B\succ0$, hence
+strictly positive. On the other hand,
+\[
+ d(M+1)>\frac{81}{100}c\frac8c=\frac{162}{25}>4.
+\]
+This is equivalent to $dM/(2L)>1$. The numerator in
+\eqref{eq:schur} is negative, so $b<0$ and
+$h=1-db/(M+1)>1$. Equation \eqref{eq:Binv} gives
+$v_0<0<v_1$, proving the main construction.
+
+For the smaller example at $a=2$, retain \eqref{eq:R} but take
+$M=8$ and $\epsilon=1/100$. Then
+\[
+ c=\frac12,\quad d=\frac{9801}{20000},\quad
+ d(M+1)=\frac{88209}{20000}>4.
+\]
+Every preceding step still applies. Its dimension is ten and its
+fixed covariance is $\Sigma=2I-K^{-1}$. This completes the proof of
+Theorem \ref{thm:all}. At $\alpha=2$, \eqref{eq:div} is one half
+of Pearson's $\chi^2(p\Vert q)$ divergence. The conclusion concerns
+changes of the optimum as $\alpha$ varies near two.
+
+\section{A rational three-dimensional example}
+Take
+\[
+ K=\begin{pmatrix}
+ 1&3/4&3/4\\
+ 3/4&1&19/50\\
+ 3/4&19/50&1
+ \end{pmatrix},\qquad a=9.
+\]
+Direct cofactors give
+\[
+ \det K=\frac{1581}{10000},\qquad
+ K^{-1}=\frac1{1581}
+ \begin{pmatrix}
+ 8556&-4650&-4650\\
+ -4650&4375&1825\\
+ -4650&1825&4375
+ \end{pmatrix}.
+\]
+On the antisymmetric leaf direction, $K-I/9$ has eigenvalue
+$8/9-19/50=229/450>0$. On the center/symmetric-leaf subspace its
+first diagonal entry is $8/9$ and its determinant is
+\[
+ \frac89\left(\frac89+\frac{19}{50}\right)
+ -2\left(\frac34\right)^2=\frac{47}{16200}>0.
+\]
+Thus $K\succ I/9$. Formula \eqref{eq:target} gives exactly
+\eqref{eq:sigma3}, and Lemma \ref{lem:K} gives $D(9)=I$.
+
+By symmetry set $v=(u,w,w)^\top$. Equation \eqref{eq:derivative}
+becomes
+\[
+ 8u+\frac{81}{8}w=\frac9{64},\qquad
+ \frac{81}{16}u+\frac{23249}{2500}w=\frac{7069}{80000}.
+\]
+Its determinant is $1851119/80000>0$. Cramer's rule gives
+\[
+ (u,w,w)=\frac1{14808952}(264375,-3209,-3209),
+\]
+proving the local assertion of Theorem \ref{thm:three}.
+The strict signs persist under sufficiently small perturbations of
+this target, by the same implicit-function argument.
+
+\subsection{Known two-dimensional ordering and minimum dimension}
+Li and Turner \cite[Appendix B]{li-turner} already give an exact
+characterization and monotonicity of the optimal precisions in two
+dimensions. Their parameter $\beta$ corresponds here to
+$\alpha=1-\beta$. We include a short alternative proof to make the
+minimum-dimension conclusion self-contained.
+\begin{proposition}\label{prop:two}
+For every non-diagonal positive-definite two-dimensional Gaussian target,
+both optimal marginal variances increase strictly on $(1,\infty)$.
+Consequently three is the smallest dimension allowing a reversal.
+\end{proposition}
+\begin{proof}
+Fix $a>1$ and let $D_0=D(a)$. Apply the fixed coordinate transformation
+$D_0^{-1/2}$ to both target and variational family. The divergence is
+invariant under this common invertible change of variables, so the
+transformed optimum is
+$\widetilde D(\alpha)=D_0^{-1/2}D(\alpha)D_0^{-1/2}$ for the fixed
+target $\widetilde\Sigma=D_0^{-1/2}\Sigma D_0^{-1/2}$.
+At $a$ it is identity, and
+\[
+ K=[aI-(a-1)\widetilde\Sigma]^{-1}
+   =\begin{pmatrix}1&r\\r&1\end{pmatrix}\succ I/a.
+\]
+Stationarity gives its unit diagonal; the strict matrix inequality follows
+from $\widetilde\Sigma\succ0$. Since the target is non-diagonal, $r\ne0$.
+The derivative in Lemma \ref{lem:K} is now
+$v_i=D'_{ii}(a)/D_{ii}(a)$, because $D_0$ was frozen. Symmetry of the
+two-coordinate system gives
+\[
+ v_1=v_2=\frac{r^2}{(a-1)((a-1)+ar^2)}>0.
+\]
+Lemma \ref{lem:global} supplies a smooth optimizer locally everywhere;
+uniqueness joins these branches on $(1,\infty)$. Integrating the positive
+log-variance derivatives proves the assertion for any two parameters.
+For a diagonal target, including dimension one, the variational family
+contains the target and its covariance is unchanged. Theorem
+\ref{thm:three} therefore attains the minimum possible dimension.
+\end{proof}
+
+\section{A decrease exceeding five percent}
+We first identify the limit of the actual optimum, without asserting
+uniform convergence of the logarithmic barrier at its boundary.
+
+\begin{lemma}\label{lem:limit}
+For a fixed positive-definite target in any finite dimension,
+$D(\alpha)$ converges as $\alpha\to\infty$ to the unique
+minimum-determinant positive diagonal majorant of $\Sigma$.
+\end{lemma}
+\begin{proof}
+Let $P_\alpha=D(\alpha)^{-1}$. It uniquely maximizes
+\[
+ F_\alpha(P)=\log\det P+
+ \frac1{\alpha-1}\log\det[\alpha\Sigma^{-1}-(\alpha-1)P].
+\]
+Its coordinates are uniformly bounded above for $\alpha\ge2$.
+The second term is uniformly bounded above by
+\[
+ \frac{n\log\alpha+\log\det\Sigma^{-1}}{\alpha-1}\longrightarrow0.
+\]
+For each fixed positive diagonal $Q\prec\Sigma^{-1}$,
+$F_\alpha(Q)\to\log\det Q$. Comparing the optimum with one such $Q$
+bounds $\log\det P_\alpha$ below; together with the coordinate upper
+bounds this excludes zero coordinates at a subsequential limit.
+Any limit $P_*$ satisfies $0\prec P_*\preceq\Sigma^{-1}$.
+Comparing with every fixed strictly feasible $Q$ gives
+$\log\det P_*\ge\log\det Q$. Scaling makes such $Q$ dense in the
+positive closed feasible set. Strict concavity of $\log\det P$ on
+diagonal precision gives a unique maximizer, so the full family
+converges to it. Inversion gives precisely the unique minimizer of
+$\log\det D$ among positive diagonal $D\succeq\Sigma$.
+\end{proof}
+
+For \eqref{eq:sigma3}, put
+\[
+ A=\frac{5673}{12648},\quad B_0=\frac{4650}{12648},\quad
+ s=\frac{8029}{12648},\quad t=\frac{11679}{12648}.
+\]
+Uniqueness and leaf symmetry make the limiting covariance
+$\Diag(x,y,y)$. Positive-semidefinite dominance of $\Sigma$ is
+equivalent to
+\[
+ y\ge t>s,\qquad x\ge A+\frac{2B_0^2}{y-s}.
+\]
+At the optimum the second constraint is tight. The derivative of
+$y^2[A+2B_0^2/(y-s)]$ has the sign of
+\[
+ f(y)=A(y-s)^2+B_0^2y-2B_0^2s.
+\]
+It is strictly increasing for $y>s$. Exact integer arithmetic gives
+\[
+ 12648^3 f(t)
+ =5673\cdot3650^2-4650^2\cdot4379
+ =2500(30231417-37873971)<0.
+\]
+The elementary rational comparisons
+$A>56/125$, $s<127/200$, and $B_0^2<17/125$, together with
+$19/20-2s<0$, imply
+\[
+ f(19/20)>
+ \frac{56}{125}\left(\frac{63}{200}\right)^2
+ -\frac{17}{125}\frac8{25}
+ =\frac{583}{625000}>0.
+\]
+Since $t<19/20$, the unique optimal $y$ lies strictly between
+$t$ and $19/20$. Lemma \ref{lem:limit} proves the final assertion
+of Theorem \ref{thm:three}, including a strict five-percent drop at
+some finite $\alpha>9$. The explicit finite comparison is proved next.
+
+
+\subsection{An explicit finite parameter pair}
+For the same rational target, retain $A,B_0,s,t$ above. Fix $a>1$,
+put $r=a-1$ and $k=a/r$, and for $y>t/k$ define
+\[
+ q=ky-s,\qquad d=ky-t,\qquad x=A+\frac{2B_0^2}{q}.
+\]
+In the center/symmetric-leaf/antisymmetric-leaf basis,
+$[a\operatorname{diag}(x,y,y)-r\Sigma]/r$ has a block
+\[
+ \begin{pmatrix}kx-A&-\sqrt2B_0\\-\sqrt2B_0&q\end{pmatrix}
+ \quad\hbox{and the entry }d.
+\]
+Its block determinant is $(k-1)xq=xq/r>0$, so the covariance is
+feasible. The first-coordinate stationarity equation holds identically;
+the two leaf equations reduce to
+\begin{equation}\label{eq:finite-E}
+ E_a(y):=\frac{y}{2r}\left(\frac1q+\frac1d\right)
+ +\frac{yB_0^2}{q(Aq+2B_0^2)}-1=0.
+\end{equation}
+Every root is therefore a feasible stationary point and is the unique
+global optimum by Lemma~\ref{lem:global}. The function is continuous on
+$(t/k,\infty)$ and tends to positive infinity at its left endpoint.
+
+Set $y_0=19/20$, $q_0=y_0-s$, and $d_0=y_0-t$.
+Exact rational comparison gives
+\[
+ \frac3{10}<q_0<\frac13,\quad d_0>\frac1{40},\quad
+ 0<A<\frac12,\quad 0<B_0^2<\frac17,
+\]
+and the estimates already used above give
+\[
+ f(y_0)>\frac{583}{625000}>\frac9{10000},\qquad
+ q_0(Aq_0+2B_0^2)<\frac{19}{126}<\frac16 .
+\]
+At $y_0$, the actual $q$ and $d$ exceed $q_0$ and $d_0$.
+The last rational term in \eqref{eq:finite-E} decreases as $q$ increases.
+Using $y_0<1$ therefore yields
+\[
+ E_a(y_0)
+ <\frac{65}{3r}
+   -\frac{f(y_0)}{q_0(Aq_0+2B_0^2)}
+ <\frac{65}{3r}-\frac{27}{5000}<0
+ \quad(a\ge10000).
+\]
+For the final inequality, $65/29997<1/400<27/5000$.
+The intermediate value theorem supplies a root with
+$t/k<y<19/20$. Strict convexity identifies its covariance with
+$D(a)$, completing the finite assertion of Theorem~\ref{thm:three}.
+The accompanying exact-rational verifier checks the numerical matrix
+identities and the scalar sign at $a=10000$; the existence and
+global-optimality argument is the analytic proof above.
+
+\section{Entropy ordering for linear Gaussian precision families}
+Individual variances can reverse, but a universal aggregate ordering
+survives. The following theorem also covers linear precision structures
+beyond the factorized family. This is an application of classical
+log-determinant and projection inequalities, not a claim of a new
+fundamental barrier principle; see the discussion below.
+
+\begin{theorem}\label{thm:entropy}
+Let $\mathcal L$ be a real linear subspace of the symmetric $n\times n$
+matrices containing a positive-definite matrix. Fix $p=N(\mu,\Sigma)$
+with $\Sigma\succ0$. Minimize \eqref{eq:div} over
+$q=N(\nu,P^{-1})$, with arbitrary $\nu$ and
+$P\in\mathcal L$, $P\succ0$.
+For every $\alpha>1$ the global optimum is unique and depends smoothly
+on $\alpha$. If $\Sigma^{-1}\notin\mathcal L$, then
+\[
+ \frac{d}{d\alpha}\log\det P(\alpha)^{-1}>0
+ \quad\text{for every }\alpha>1.
+\]
+If $\Sigma^{-1}\in\mathcal L$, the optimum equals $p$ for every $\alpha$
+and its entropy is constant.
+\end{theorem}
+
+\begin{proof}
+Translate the target mean to zero. Gaussian integration as in
+Lemma \ref{lem:global} makes the optimal variational mean zero.
+Write $\Lambda=\Sigma^{-1}$. The precision objective is again
+\[
+ J_\alpha(P)=-(\alpha-1)\log\det P-\log\det\Phi_\alpha(P),
+ \qquad \Phi_\alpha(P)=\alpha\Lambda-(\alpha-1)P.
+\]
+Its domain in $\mathcal L$ is $P\succ0$, $\Phi_\alpha(P)\succ0$.
+It is open, convex and nonempty: a sufficiently small positive multiple
+of any positive-definite member of $\mathcal L$ is feasible.
+It is bounded because $0\prec P\prec\alpha\Lambda/(\alpha-1)$.
+The objective diverges at every boundary, with either determinant
+vanishing and the other negative logarithm bounded below.
+For a nonzero $E\in\mathcal L$, its Hessian is
+\begin{align*}
+ d^2J_\alpha(P)[E,E]
+ &=(\alpha-1)\operatorname{tr}(P^{-1}EP^{-1}E)\\
+ &\quad+(\alpha-1)^2
+   \operatorname{tr}(\Phi_\alpha^{-1}E\Phi_\alpha^{-1}E)>0.
+\end{align*}
+Thus a unique interior global optimum exists. The restricted Hessian
+is invertible, giving smooth local branches by the implicit-function
+theorem; uniqueness joins them globally.
+
+Fix $a>1$ and put $P_0=P(a)$. Apply the single fixed coordinate
+transformation $x\mapsto P_0^{1/2}x$. The transformed quantities are
+\[
+ \widetilde P(\alpha)=P_0^{-1/2}P(\alpha)P_0^{-1/2},\quad
+ \widetilde\Lambda=P_0^{-1/2}\Lambda P_0^{-1/2},\quad
+ \widetilde{\mathcal L}=P_0^{-1/2}\mathcal L P_0^{-1/2}.
+\]
+The transformed space contains $I$, the optimizer at $a$ is $I$, and
+the derivative of the log determinant of covariance is unchanged.
+Drop tildes. Let $\Pi$ be Frobenius orthogonal projection onto this
+transformed $\mathcal L$, and set
+\[
+ H=[a\Lambda-(a-1)I]^{-1}\succ0.
+\]
+The first-order condition is
+$\Pi(P^{-1}-\Phi_\alpha^{-1})=0$. At $a$ it gives
+\begin{equation}\label{eq:projectstation}
+ \Pi H=I,\qquad \operatorname{tr}(HF)=\operatorname{tr}F
+ \quad(F\in\mathcal L).
+\end{equation}
+The projection here uses the transformed subspace; no invariance of
+the original Frobenius projection under congruence is assumed.
+
+Let $E=P'(a)\in\mathcal L$. Differentiation, with target and subspace
+fixed, gives
+\[
+ \mathcal A E=\frac1a\Pi(H-H^2),\qquad
+ \mathcal A F=\Pi\{F+(a-1)HFH\}.
+\]
+Indeed $\Phi'_a=\Lambda-I-(a-1)E$ and
+$\Lambda-I=(H^{-1}-I)/a$. The operator $\mathcal A$ is self-adjoint
+and positive definite on $\mathcal L$, since
+\[
+ \langle F,\mathcal A F\rangle
+ =\|F\|_F^2+(a-1)\|H^{1/2}FH^{1/2}\|_F^2>0
+ \quad(F\ne0).
+\]
+Using \eqref{eq:projectstation} and
+$\mathcal A I=I+(a-1)\Pi H^2$, we obtain
+\[
+ E=\frac{a\mathcal A^{-1}I-I}{a(a-1)}.
+\]
+At normalized $P=I$, the log-determinant derivative of the covariance
+is therefore
+\begin{equation}\label{eq:entropyderiv}
+ -\operatorname{tr}E
+ =\frac{n-a\langle I,\mathcal A^{-1}I\rangle}{a(a-1)}.
+\end{equation}
+
+Consider the direct sum of two symmetric-matrix spaces with Frobenius
+inner products, and define
+\[
+ \mathcal T(F)=(F,\sqrt{a-1}\,H^{1/2}FH^{1/2}),\qquad
+ z=(I,\sqrt{a-1}\,I).
+\]
+Then $\mathcal T^*\mathcal T=\mathcal A$. By
+\eqref{eq:projectstation},
+$\langle z,\mathcal T(F)\rangle=a\operatorname{tr}F$ for all
+$F\in\mathcal L$, so $\mathcal T^*z=aI$ and $\|z\|^2=an$.
+The projection of $z$ onto $\operatorname{im}\mathcal T$ is
+$\mathcal T(a\mathcal A^{-1}I)$ and has squared norm
+$a^2\langle I,\mathcal A^{-1}I\rangle$. Consequently
+\begin{equation}\label{eq:entropyresidual}
+ \frac{d}{d\alpha}\log\det P(\alpha)^{-1}\Big|_{\alpha=a}
+ =\frac{\|z-\mathcal T(a\mathcal A^{-1}I)\|^2}{a^2(a-1)}
+ \ge0.
+\end{equation}
+Equality forces $z=\mathcal T(F)$ for some $F\in\mathcal L$.
+Its first component gives $F=I$ and its second gives $H=I$,
+hence $\Lambda=I$ in normalized coordinates. Undoing the transformation
+gives the original $\Sigma^{-1}=P_0\in\mathcal L$.
+Conversely, if the target precision belongs to $\mathcal L$, exact
+fitting is feasible and is the unique optimum for every $\alpha$.
+
+For a target outside the family, \eqref{eq:entropyresidual} is strictly
+positive at every $a>1$. Integration yields strict ordering between any
+two parameters. Gaussian differential entropy is
+$n\log(2\pi e)/2+\log\det P(\alpha)^{-1}/2$, so the same strictness
+holds for entropy.
+\end{proof}
+
+Theorem \ref{thm:entropy} includes diagonal and block-diagonal precision,
+fixed graphical zero patterns, and symmetric Toeplitz precision
+subspaces. It does not assert componentwise or Loewner covariance
+ordering, or extend to arbitrary affine, nonlinear or inequality
+constraints. The target and the linear subspace must remain fixed.
+It also makes no claim for non-Gaussian targets.
+
+\paragraph{Relation to classical barrier inequalities.}
+The change of variables $\mu=\alpha-1$ and
+$Q=\mu P/(1+\mu)$ makes the feasible set independent of $\mu$.
+Up to constants, the precision objective is
+$\mu f(Q)+g(Q)$ with
+$f(Q)=-\log\det Q$ and $g(Q)=-\log\det(\Sigma^{-1}-Q)$.
+At a differentiability point write $d=Q'_\mu$ and
+$h=-Df(Q)[d]$. Differentiated optimality gives
+\[
+ Dg(Q)[d]=\mu h,\qquad
+ \mu D^2f(Q)[d,d]+D^2g(Q)[d,d]=h.
+\]
+The standard barrier gradient inequality
+$|DF(Q)[d]|^2\le nD^2F(Q)[d,d]$ for each log-determinant
+barrier (see \cite[Definition 2.1, Eq.~(2.4)]{nemirovski-todd}) gives
+\[
+ \frac{\mu(1+\mu)}{n}h^2\le h,\qquad
+ h\le\frac{n}{\mu(1+\mu)}.
+\]
+Consequently the optimized covariance log determinant
+$-\log\det Q_\mu+n\log(\mu/(1+\mu))$ is nondecreasing.
+Equality in this entropy derivative bound requires
+$h=n/[\mu(1+\mu)]>0$. Equality in both trace Cauchy--Schwarz
+inequalities then forces
+$Q=\mu\Sigma^{-1}/(1+\mu)$, hence exact fitting.
+This is a short alternative classical derivation of
+Theorem~\ref{thm:entropy}. The precise prior occurrence of the
+Gaussian consequence has not been established here.
+
+\section{Scope and prior-work boundary}
+These constructions settle the explicit above-one extension
+conjecture in \cite{mps} in the negative. The source's ordering theorem on $(0,1)$,
+its forward-KL comparison for $\alpha>1$, its entropy-matching
+result, and its impossibility theorem remain unaffected.
+
+The obstruction occurs at unique global optima of smooth
+positive-definite Gaussian targets. It cannot be attributed to a
+Monte Carlo gradient, local minimum, optimizer tie, or singular target.
+It does show that increasing $\alpha>1$ is not a universally
+componentwise monotone way to enlarge variational uncertainty.
+It does not establish a real-data consequence, an entropy reversal,
+or failure of any inference algorithm's convergence guarantee.
+
+The conjecture appears in the official JMLR paper and arXiv v5.
+The two-dimensional characterization is prior work
+\cite[Appendix B]{li-turner}. The entropy result is an elementary
+consequence of classical log-determinant barrier inequalities
+\cite{nemirovski-todd}; no foundational novelty is claimed for it.
+This release makes no claim of being the first construction or proof
+of the higher-dimensional reversals. A literature search and a
+timestamp do not establish priority.
+
+Monotonicity of a variational bound at fixed distributions
+\cite{li-turner}, decrease along optimization iterations \cite{daudel},
+and ordering of unnormalized mass \cite{minka} are different statements
+from ordering the entropy of the normalized optimizer as $\alpha$ varies.
+
+\paragraph{Methods and verification.}
+AI tools were used extensively in the literature search, derivations,
+writing, and checking of this note. The accompanying Python verifier
+uses exact rational arithmetic for the explicit finite matrix example
+and finite-parameter comparison. It does not formally verify the
+analytic theorems. Separate computational checks and AI proof reviews
+do not constitute independent human peer review. No numerical
+variational optimizer, trained-model experiment, or practical
+inference improvement is reported.
+
+\begin{thebibliography}{9}
+\bibitem{nemirovski-todd}
+A.~S. Nemirovski and M.~J. Todd.
+\newblock Interior-point methods for optimization.
+\newblock \emph{Acta Numerica}, 17:191--234, 2008.
+\newblock \url{https://www2.isye.gatech.edu/~nemirovs/Published.pdf}.
+
+\bibitem{mps}
+C.~C. Margossian, L. Pillaud-Vivien, and L.~K. Saul.
+\newblock Variational Inference for Uncertainty Quantification:
+an Analysis of Trade-offs.
+\newblock \emph{Journal of Machine Learning Research},
+26(202):1--41, 2025.
+\newblock \url{https://jmlr.org/papers/v26/24-0878.html}.
+\newblock Retrieved version also available as
+\href{https://arxiv.org/abs/2403.13748v5}{arXiv:2403.13748v5}.
+\bibitem{li-turner}
+Y. Li and R.~E. Turner.
+\newblock R\'enyi Divergence Variational Inference.
+\newblock \emph{Advances in Neural Information Processing Systems} 29,
+2016. Appendix B.
+\newblock \url{https://arxiv.org/abs/1602.02311v3}.
+
+\bibitem{daudel}
+K. Daudel, R. Douc, and F. Roueff.
+\newblock Monotonic Alpha-divergence Minimisation for Variational Inference.
+\newblock \emph{Journal of Machine Learning Research}, 24, 2023.
+\newblock \url{https://www.jmlr.org/papers/volume24/21-0249/21-0249.pdf}.
+
+\bibitem{minka}
+T. Minka.
+\newblock Divergence measures and message passing.
+\newblock Microsoft Research technical report MSR-TR-2005-173, 2005.
+\newblock \url{https://tminka.github.io/papers/message-passing/minka-divergence.pdf}.
+\end{thebibliography}
+\end{document}

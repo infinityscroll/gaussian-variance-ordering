@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Please cite the version you used. This release makes no priority claim."
+type: software
+title: "Variance reversals and entropy ordering in Gaussian variational inference"
+authors:
+  - family-names: Prajapati
+    given-names: Jitendra
+version: 1.0.0
+date-released: 2026-10-25
+repository-code: "https://github.com/infinityscroll/gaussian-variance-ordering"
+url: "https://github.com/infinityscroll/gaussian-variance-ordering"

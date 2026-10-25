@@ -1,0 +1,8 @@
+*.aux
+*.log
+*.out
+*.synctex.gz
+__pycache__/
+output/pdf/build-pass*.txt
+output/pdf/main.pdf
+.DS_Store
